@@ -1,0 +1,40 @@
+Assembly guide
+==============
+
+Unity snap settings on all axes: 1;
+Rotate angle setting: 90;
+
+After positioning the desired prefabs, make sure to always stay on Unity's grid
+(even numbers on all axes). Inevitable to get uneven numbers at doors (wall thickness) and smaller modular pieces
+(yellow rails), but be sure to correct the offset in the next room built next to it
+ - either by using the door piece provided
+ - or by snapping the next floor tile underneath the door (demo scene)
+
+This is essential so that certain levels are at certain elevations, so it's easy to connect them using elevators
+or staircases. (Else if a huge offset is generated, after the 3rd room, building will be impossible to continue)
+
+Vertex snapping required at following modular models:
+ - Metal cutout floor tile (1x1); snap the first piece to desired wall, then continue building from there.
+ - Yellow metal rails and corner pieces; snap the bottom vertex to the metal tile floor (check out the demo scene)
+ - narrow tunnel; intentionally I positioned 3 triangles in the corner, snap that to the doorframe (demo scene: red light corridor)
+ - Pipes at corners; use their vertices simply
+ 
+ Important that since doors have 2 materials (both sides for transitioning) and they are in LOD groups, if you change the doorframe's material to the desired one, select LOD1 model
+ as well, and adjust its material, too. (Else when LOD1 is rendered, it shows the default concrete material assigned, and it may not be the one you want)
+ 
+Hint: Walls, ceiling and floor are all concrete, so ceilings can be walls, walls can be ceilings. Experiment for some exciting results.
+Also, leave Source/Imports/Materials folder open in your project view, and simply drag any Concrete material up to a wall/ceiling/floor. Sometimes
+it's quicker to build that way.
+
+Another hint: Use Door3 laid down, attach floor material to its frame, and use the narrow tunnel vertically with any of the modular ladder types available
+to get a vertical corridor (as a secret bypass next to the elevator, etc)
+
+
+Once you get familiar with all prefabs, building a level is fast and easy with MBCP.
+
+If you get stuck anywhere - gabromedia@gmail.com always.
+
+Happy bunker building!
+
+
+

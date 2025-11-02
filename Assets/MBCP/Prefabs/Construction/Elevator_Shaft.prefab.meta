@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8003eefc6334931478220efe8e146de3
+labels:
+- Elevator
+- Shaft
+- Wall
+- Floor
+- Ceiling
+timeCreated: 1447010514
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 5db9969dca1a2e6438d9237d5609f23c
+labels:
+- Wall
+- Floor
+- Ceiling
+timeCreated: 1448378013
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
