@@ -46,14 +46,16 @@ public class PlayerScript : MonoBehaviour
         }
         
         //gravity
-        velocity.y -= gravity * Time.deltaTime;
-        cC.Move(velocity * Time.deltaTime);
+       
         
         playerMove();
 
         Jump();
         
         Sprint();
+        
+        velocity.y -= gravity * Time.deltaTime;
+        cC.Move(velocity * Time.deltaTime);
 
 
     }
@@ -71,7 +73,7 @@ public class PlayerScript : MonoBehaviour
             animator.SetBool("Walk", true);
             animator.SetBool("Running", false);
             animator.SetBool("Idle", false);
-            animator.SetTrigger("Jump");
+            //animator.SetTrigger("Jump");
             animator.SetBool("AimWalk", false);
             animator.SetBool("IdleAim", false);
             
@@ -85,7 +87,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             animator.SetBool("Idle", true);
-            animator.SetTrigger("Jump");
+            //animator.SetTrigger("Jump");
             animator.SetBool("Walk", false);
             animator.SetBool("Running", false);
             animator.SetBool("AimWalk", false);
@@ -96,13 +98,10 @@ public class PlayerScript : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump") && onSurface)
         {
-            animator.SetBool("Walk", false);
+            Debug.Log("¡Saltando! onSurface: " + onSurface + " velocity.y antes: " + velocity.y);
             animator.SetTrigger("Jump");
             velocity.y = Mathf.Sqrt(jumpRange * 2f * gravity);
-        }
-        else
-        {
-            animator.ResetTrigger("Jump");
+            Debug.Log("velocity.y después: " + velocity.y);
         }
     }
     
