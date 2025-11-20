@@ -6,6 +6,7 @@ public class EnemyDrone : MonoBehaviour
     private float enemyHealth = 120f;
     private float presentHealth;
     public float giveDamage = 5f;
+    public HealthBar healthBar;
     
     [Header("Enemy Things")] 
     public UnityEngine.AI.NavMeshAgent enemyAgent;
@@ -60,6 +61,7 @@ public class EnemyDrone : MonoBehaviour
             enabled = false;
             return;
         }
+        healthBar.GiveFullHealth(enemyHealth);
         playerBody = playerObj.transform;
         
         // Obtener NavMeshAgent
@@ -336,6 +338,7 @@ public class EnemyDrone : MonoBehaviour
         if (isDead) return;
         
         presentHealth -= takeDamage;
+        healthBar.SetHealth(presentHealth);
         Debug.Log($"💔 Enemy recibió daño: {takeDamage} | Vida restante: {presentHealth}/{enemyHealth}");
 
         if (presentHealth <= 0)

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Rifle : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class Rifle : MonoBehaviour
     [Header("Rifle Ammunition and shooting")]
     private int maximunAmmunition = 20;
 
-    private int mag = 15;
+    private int mag = 1;
     private int presentAmunition;
     public float reloadingTime = 1.3f;
     private bool setReloading = false;
@@ -32,8 +33,10 @@ public class Rifle : MonoBehaviour
     public GameObject impactEffect;
     public GameObject goreEffect;
     public GameObject droneEffect;
-    
-    //[Header("Sounds and UI)]
+
+    [Header("Sounds and UI")]
+            [SerializeField] private GameObject AmmoOutUI;    
+    [SerializeField] private int timeToShowUI = 1;
 
     private void Awake()
     {
@@ -84,54 +87,77 @@ public class Rifle : MonoBehaviour
         }
     }
 
-    void Shoot()
+   void Shoot()
+{
+    if (mag == 0)
     {
-        // check for mag
+        StartCoroutine(ShowAmmoOut());
+        return;
+    }
+    
+    presentAmunition--;
 
-        if (mag == 0)
-        {
-            //show ammo out text
-            return;
-        }
+    if (presentAmunition == 0)
+    {
+        mag--;
+    }
+    
+    // ✅ ACTUALIZAR UI - CORRECTO
+    if (AmmoCount.ocurrence != null)
+    {
+        AmmoCount.ocurrence.UpdateAmmoText(presentAmunition);
+        AmmoCount.ocurrence.UpdateMagText(mag);
+    }
+    else
+    {
+        Debug.LogError("❌ AmmoCount.ocurrence es NULL!");
+    }
+    
+    muzzleSpark.Play();
+    RaycastHit hitInfo;
+
+    if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hitInfo, shootingRange))
+    {
+        Debug.Log(hitInfo.transform.name);
         
-        presentAmunition--;
+        Objects objects = hitInfo.transform.GetComponent<Objects>();
+        if (objects == null) objects = hitInfo.transform.GetComponentInParent<Objects>();
+        
+        Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
+        if (enemy == null) enemy = hitInfo.transform.GetComponentInParent<Enemy>();
+        
+        EnemyDrone enemyDrone = hitInfo.transform.GetComponent<EnemyDrone>();
+        if (enemyDrone == null) enemyDrone = hitInfo.transform.GetComponentInParent<EnemyDrone>();
 
-        if (presentAmunition == 0)
+        if (objects != null)
         {
-            mag--;
-        }
-        muzzleSpark.Play();
-        RaycastHit hitInfo;
-
-        if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hitInfo, shootingRange))
-        {
-            Debug.Log(hitInfo.transform.name);
-            
-            Objects objects = hitInfo.transform.GetComponent<Objects>();
-            Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
-            EnemyDrone enemyDrone = hitInfo.transform.GetComponent<EnemyDrone>();
-
-            if (objects != null)
+            objects.objectHitDamage(giveDamageOf);
+            if (impactEffect != null)
             {
-                objects.objectHitDamage(giveDamageOf);
                 GameObject impactGO = Instantiate(impactEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(impactGO, 1f);
             }
-            else if (enemy != null)
+        }
+        else if (enemy != null)
+        {
+            enemy.enemyHitDamage(giveDamageOf);
+            if (goreEffect != null)
             {
-                enemy.enemyHitDamage(giveDamageOf);
                 GameObject impactGO = Instantiate(goreEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
                 Destroy(impactGO, 2f);
-
             }
-            else if (enemyDrone != null)
+        }
+        else if (enemyDrone != null)
+        {
+            enemyDrone.enemyDroneHitDamage(giveDamageOf);
+            if (droneEffect != null)
             {
-                enemyDrone.enemyDroneHitDamage(giveDamageOf);
                 GameObject impactGO = Instantiate(droneEffect, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-                Destroy(impactGO, 1f); 
+                Destroy(impactGO, 1f);
             }
-        }                                                                                                                                                                    
+        }
     }
+}
 
     IEnumerator Reload()
     {
@@ -146,6 +172,12 @@ public class Rifle : MonoBehaviour
         player.playerSpeed = 1.9f;
         player.playerSprint = 3;
         setReloading = false;
+    }
 
+    IEnumerator ShowAmmoOut()
+    {
+        AmmoOutUI.SetActive(true);
+        yield return new WaitForSeconds(timeToShowUI);
+        AmmoOutUI.SetActive(false);
     }
 }

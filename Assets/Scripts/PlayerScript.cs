@@ -10,9 +10,11 @@ public class PlayerScript : MonoBehaviour
 
     [Header("Player Health Things")] private float playerHealth = 120f;
     private float presentHealth;
-   
-    [Header("Player Script Cameras")]
-    public Transform playerCamera;
+    public HealthBar healthBar;
+
+    [Header("Player Script Cameras")] public Transform playerCamera;
+    public GameObject deathCamera;
+    public GameObject EndGameMenuUI;
     
     [Header("Player Animator and Gravity")]
     public CharacterController cC;
@@ -35,6 +37,7 @@ public class PlayerScript : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         presentHealth = playerHealth;
+        healthBar.GiveFullHealth(playerHealth);
     }
 
     // Update is called once per frame
@@ -145,6 +148,7 @@ public class PlayerScript : MonoBehaviour
     public void playerHitDamage(float takeDamage)
     {
         presentHealth -= takeDamage;
+        healthBar.SetHealth(presentHealth);
 
         if (presentHealth <= 0)
         {
@@ -154,7 +158,9 @@ public class PlayerScript : MonoBehaviour
 
     private void PlayerDie()
     {
+        EndGameMenuUI.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
+        deathCamera.SetActive(true);
         Object.Destroy(gameObject, 1.0f);
     }
 }
