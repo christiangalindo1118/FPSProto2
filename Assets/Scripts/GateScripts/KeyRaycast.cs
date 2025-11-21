@@ -1,0 +1,77 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+
+namespace KeyNetwork
+{
+    public class KeyRaycast : MonoBehaviour
+    {
+        [Header("Raycast Radius and layer")] 
+        [SerializeField] private int rayRadius = 6;
+        [SerializeField] private LayerMask LayerMaskCollective;
+        [SerializeField] private string banLayerName = null;
+
+        private KeyObjectRegulator raycastObject;
+
+        [SerializeField] private KeyCode openGateButton = KeyCode.F;
+        [SerializeField] private Image crosshair = null;
+
+        private bool checkCrosshair;
+        private bool Onetime;
+
+        private string collectiveTag = "collectiveObject";
+
+        private void Update()
+        {
+            RaycastHit hitInfo;
+
+            Vector3 forwardDirection = transform.TransformDirection(Vector3.forward);
+
+            // ✅ Arreglado el operador OR para evitar errores de precedencia
+            int mask = (1 << LayerMask.NameToLayer(banLayerName)) | LayerMaskCollective.value;
+
+            if (Physics.Raycast(transform.position, forwardDirection, out hitInfo, rayRadius, mask))
+            {
+                if (hitInfo.collider.CompareTag(collectiveTag))
+                {
+                    if (!Onetime)
+                    {
+                        // ⬅ Variable correcta
+                        raycastObject = hitInfo.collider.gameObject.GetComponent<KeyObjectRegulator>();
+                        ChangeCrosshair(true);
+                    }
+
+                    checkCrosshair = true;
+                    Onetime = true;
+
+                    if (Input.GetKeyDown(openGateButton))
+                    {
+                        raycastObject.foundObject();
+                    }
+                }
+            }
+            else
+            {
+                if (checkCrosshair)
+                {
+                    ChangeCrosshair(false);
+                    Onetime = false;
+                }
+            }
+        }
+
+        void ChangeCrosshair(bool changeCH)
+        {
+            if (changeCH && !Onetime)
+            {
+                crosshair.color = Color.blue;
+            }
+            else
+            {
+                crosshair.color = Color.white;
+                checkCrosshair = false;
+            }
+        }
+    }
+
+}
